@@ -4,4 +4,4 @@ This is a repo which contains any and all code used within my dissertation proje
 
 
 # Python
-[python/screenshot-lostark-marketplace.py](https://github.com/cdgamedev/dissertation-project/blob/main/python/screenshot-lostark-marketplace.py) is a simple Lost Ark utility which takes screenshots of the Auction House window.
+[python/screenshot-util.py](https://github.com/cdgamedev/dissertation-project/blob/main/python/screenshot-util.py) is a simple utility to take screenshots of a specific regions of a display and save them to a folder when the a key is pressed.
