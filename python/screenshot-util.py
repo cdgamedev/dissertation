@@ -11,13 +11,13 @@ class Coordinate:
 # information regarding the screenshot region
 def get_region_info():
     # set coordinates
-    pos1 = Coordinate(1260, 670)
-    pos2 = Coordinate(2930, 1630)
+    pos1 = Coordinate(1260, 730)
+    pos2 = Coordinate(2930, 1585)
     
     # calculate width and height
     width = pos2.x - pos1.x
     height = pos2.y - pos1.y
-    return pos1.x, pos2.y, width, height
+    return pos1.x, pos1.y, width, height
 
 # counter to name the images
 global counter
