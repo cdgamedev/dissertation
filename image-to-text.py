@@ -4,8 +4,8 @@ import re
 # important consts for program to know
 IMAGE_COUNT = 165
 DATASET_NAME = "Dataset 1 - 08.09.2022"
-INPUT_DATA_LOCATION = r"D:\dissertation-project\Images\{0}\desaturated".format(DATASET_NAME)
-OUTPUT_DATA_LOCATION = r"D:\dissertation-project\Datasets\{0}.csv".format(DATASET_NAME)
+INPUT_DATA_LOCATION = "output-screenshots"
+OUTPUT_DATA_LOCATION = "data.csv"
 
 # tesseract specific configuration
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"

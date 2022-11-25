@@ -2,12 +2,14 @@ import os
 from PIL import Image
 import numpy as np
 
-# get input of the image count
+# input and output of the images
 INPUT_LOCATION = "original-screenshots"
 OUTPUT_LOCATION = "output-screenshots"
 
-IMAGE_CROPS = [[1400, 50], [700, 500]]
-IMAGE_OUTPUT_WIDTH = 1100
+# the crop locations for the images (x pos, width)
+IMAGE_CROPS = [(1400, 50), (700, 500), (0, 130)]
+# output width of the images (retain original height)
+IMAGE_OUTPUT_WIDTH = 950
 
 # crop a column out of an image
 def image_crop_column(img, crop):
@@ -44,13 +46,13 @@ for file in os.listdir(INPUT_LOCATION):
         continue
     # open the image and convert it to greyscale
     img = Image.open(r"{0}\\{1}".format(INPUT_LOCATION, file)).convert('L')
-    # crop out the gold icon after the sell price column
-    img = image_crop_column(img, IMAGE_CROPS[0])
-    # crop out the start bid and quality columns
-    img = image_crop_column(img, IMAGE_CROPS[1])
+    # crop out the columns specified
+    for i in IMAGE_CROPS:
+        img = image_crop_column(img, i)
     # resize the image after cropping
     img = image_resize(img)
     # save the image
     img.save(r"{0}\\{1}".format(OUTPUT_LOCATION, file))
+    print(file)
 
 print("COMPLETED!")
