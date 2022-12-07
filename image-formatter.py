@@ -7,16 +7,14 @@ INPUT_LOCATION = "original-screenshots"
 OUTPUT_LOCATION = "output-screenshots"
 
 # the crop locations for the images (x pos, width)
-IMAGE_CROPS = [(1400, 50), (700, 500), (0, 130)]
+IMAGE_CROPS = [(1400, 50), (700, 500), (230, 200), (0, 130)]
 # output width of the images (retain original height)
-IMAGE_OUTPUT_WIDTH = 950
+IMAGE_OUTPUT_WIDTH = 770
 
 # crop a column out of an image
 def image_crop_column(img, crop):
-    # get the starting pos
-    crop_x = crop[0]
-    # get the width of the crop
-    crop_width = crop[1]
+    # set the crop to x and width
+    crop_x, crop_width = crop
     
     # convert the image to an array
     img_arr = np.array(img)
