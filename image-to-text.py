@@ -3,14 +3,13 @@ import re
 
 # important consts for program to know
 IMAGE_COUNT = 165
-DATASET_NAME = "Dataset 1 - 08.09.2022"
+DATASET_NAME = "Dataset 1 - 08.09.2022.csv"
 INPUT_DATA_LOCATION = "output-screenshots"
-OUTPUT_DATA_LOCATION = "data.csv"
 
 # tesseract specific configuration
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 custom_oem_psm_config = r'''
--c tessedit_char_whitelist="01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz,. "
+-c tessedit_char_whitelist="01234567890TierLvl,. "
 -c preserve_interword_spaces=1x1
 --oem 3 --psm 6'''
 
@@ -18,8 +17,8 @@ custom_oem_psm_config = r'''
 i = input("Continuing will clear existing data. Would you like to continue? [Y/N] ")
 if (i == "Y"):
     # clear all data
-    output = open(OUTPUT_DATA_LOCATION, "w+")
-    output.write("Page,EntryNo,Level,Name,Tier,Cost,Date\n")
+    output = open(DATASET_NAME, "w+")
+    output.write("Page,EntryNo,Level,Tier,Cost,Date\n")
     output.close()
 else:
     # exit program
@@ -34,10 +33,9 @@ else:
 class Gem():
         
     # when creating a new class
-    def __init__(self, page = "-", entry_no = "-", level = "-", name = "-", tier="-", cost="-", date="-"):
+    def __init__(self, page = "-", entry_no = "-", level = "-", tier= "-", cost="-", date="-"):
         self.page = page
         self.entry_no = entry_no
-        self.name = name
         self.level = level
         self.tier = tier
         self.cost = cost
@@ -45,7 +43,7 @@ class Gem():
     
     # convert gem stucture to a string
     def __str__(self) -> str:
-        return r"{0},{1},{2},{3},{4},{5},{6}".format(self.page, self.entry_no, self.level, self.name, self.tier, self.cost, self.date)
+        return r"{0},{1},{2},{3},{4},{5}".format(self.id, self.page, self.entry_no, self.level, self.tier, self.cost, self.date)
 
 # get the data in rows
 def get_data_rows(ocr):
@@ -74,10 +72,10 @@ def get_gem_data(number, row):
     # get the row data by splitting entries with >=2 space characters
     row = re.split(r"\s{2,}", row)
     
-    filter_gem  = r'Gem'
-    filter_tier = r'Tier'
+    filter_level  = r'Level'
+    filter_tier = r'er \d'
     filter_date = r'\d\d\d\d.\d\d.\d\d'
-    filter_cost = '\d{1,3}[\,]{1}\d{1,3}|\d{1,3}'
+    filter_cost = '\d{1,3}[\,.]{1}\d{1,3}|\d{1,3}'
     
     # create a new gem using the page number and index number
     gem = Gem(page, number)
@@ -87,8 +85,8 @@ def get_gem_data(number, row):
         cell = cell.replace(',', '')
         
         # check through cell with each filter and process accordingly
-        if re.search(filter_gem, cell):
-            gem.name, gem.level = handle_name_and_level(cell)
+        if re.search(filter_level, cell):
+            gem.level = handle_level(cell)
         elif re.search(filter_tier, cell):
             gem.tier = handle_tier(cell)
         elif re.search(filter_date, cell):
@@ -100,11 +98,13 @@ def get_gem_data(number, row):
             
     return str(gem)
 
-def handle_name_and_level(name):
-    level = "Level " + re.search('\d+', name).group(0)
-    name = re.sub(r'^\D+\d ', '', name)
+def handle_level(level):
+    number = re.search('\d+', level).group(0)
+    if (int(number) > 10):
+        number = number[0]
+    level = "Level " + number
     
-    return name, level
+    return level
 
 def handle_tier(tier):
     return tier
@@ -117,7 +117,6 @@ def handle_cost(cost):
     return cost
 
 def parse_string_data(ocr):
-    #print(ocr)
     data_rows = get_data_rows(ocr)
     gem_list = []
     
@@ -125,7 +124,7 @@ def parse_string_data(ocr):
         row = data_rows[i]
         gem_list.append(get_gem_data(i + 1, row))
     
-    output = open(OUTPUT_DATA_LOCATION, "a")
+    output = open(DATASET_NAME, "a")
     
     output.write('\n'.join(gem_list))
     output.write('\n')
