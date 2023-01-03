@@ -18,7 +18,7 @@ i = input("Continuing will clear existing data. Would you like to continue? [Y/N
 if (i == "Y"):
     # clear all data
     output = open(DATASET_NAME, "w+")
-    output.write("Page,EntryNo,Level,Tier,Cost,Date\n")
+    output.write("ID,Page,EntryNo,Level,Tier,GemType,Cost,Date\n")
     output.close()
 else:
     # exit program
@@ -33,7 +33,9 @@ else:
 class Gem():
         
     # when creating a new class
-    def __init__(self, page = "-", entry_no = "-", level = "-", tier= "-", cost="-", date="-"):
+    def __init__(self, page = -1, entry_no = -1, level = -1, tier= -1,
+                 cost= -1, date= -1):
+        self.id = 10 * (page - 1) + entry_no
         self.page = page
         self.entry_no = entry_no
         self.level = level
@@ -43,7 +45,11 @@ class Gem():
     
     # convert gem stucture to a string
     def __str__(self) -> str:
-        return r"{0},{1},{2},{3},{4},{5}".format(self.id, self.page, self.entry_no, self.level, self.tier, self.cost, self.date)
+        self.gem_type = 10 * (int(self.tier - 1)) + self.level
+        return r"{0},{1},{2},{3},{4},{5},{6},{7}".format(
+            self.id, self.page, self.entry_no, self.level, self.tier,
+            self.gem_type, self.cost, self.date
+        )
 
 # get the data in rows
 def get_data_rows(ocr):
@@ -79,6 +85,7 @@ def get_gem_data(number, row):
     
     # create a new gem using the page number and index number
     gem = Gem(page, number)
+    print(row)
     
     # for all the cells in the row
     for cell in row:
@@ -95,6 +102,7 @@ def get_gem_data(number, row):
             gem.cost = handle_cost(cell)
         else:
             print(r"Data issue: {0}".format(cell))
+            input()
             
     return str(gem)
 
@@ -102,11 +110,12 @@ def handle_level(level):
     number = re.search('\d+', level).group(0)
     if (int(number) > 10):
         number = number[0]
-    level = "Level " + number
+    level = int(number)
     
     return level
 
 def handle_tier(tier):
+    tier = int(tier[5:])
     return tier
 
 def handle_date(date):
@@ -135,7 +144,8 @@ def parse_string_data(ocr):
 
 for page in range(1, IMAGE_COUNT + 1):
     page_id = r"page_{0}.png".format(page)
-    ocr = pytesseract.image_to_string(r"{0}\{1}".format(INPUT_DATA_LOCATION, page_id), config=custom_oem_psm_config)
+    ocr = pytesseract.image_to_string(r"{0}\{1}"
+    .format(INPUT_DATA_LOCATION, page_id), config=custom_oem_psm_config)
     
     text_data = parse_string_data(ocr)
     print(text_data)

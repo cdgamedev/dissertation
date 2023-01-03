@@ -21,7 +21,7 @@ def get_region_info():
 
 # counter to name the images
 global counter
-counter = 0
+counter = 37
 
 # function so save screenshots
 def save_screenshot():
